@@ -12,6 +12,8 @@ class ArtistsController < ApplicationController
       if Preference.last[:allow_create_artists] == false 
         flash[:alert] = "You are not authorized to add a new artist."
         redirect_to artists_path
+      else 
+        @artist = Artist.new
       end
     else 
       @artist = Artist.new
