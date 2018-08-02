@@ -5,14 +5,12 @@ class SongsController < ApplicationController
       if @artist.nil?
         redirect_to artists_path, alert: "Artist not found"
       else
-        @songs = @artist.songs
+        songs = @artist.songs
+        @songs = Song.sort_songs(songs)
       end
     else
-      if Preference.last[:song_sort_order] == "ASC"
-        @songs = Song.order('name ASC')
-      else 
-        @songs = Song.order('name DESC')
-      end
+      songs = Song.all
+      @songs = Song.sort_songs(songs)
     end
   end
 
@@ -29,11 +27,13 @@ class SongsController < ApplicationController
   end
 
   def new
-    if Preference.last[:allow_create_songs] == true 
-      @song = Song.new
+    if Preference.last !=nil
+      if Preference.last[:allow_create_songs] == false
+        flash[:alert] = "You are not authorized to add a new song."
+        redirect_to songs_path
+      end
     else 
-      flash[:alert] = "You are not authorized to add a new song."
-      redirect_to songs_path
+     @song = Song.new
     end
   end
 
