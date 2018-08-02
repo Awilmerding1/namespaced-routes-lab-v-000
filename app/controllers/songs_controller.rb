@@ -31,6 +31,8 @@ class SongsController < ApplicationController
       if Preference.last[:allow_create_songs] == false
         flash[:alert] = "You are not authorized to add a new song."
         redirect_to songs_path
+      else 
+        @song = Song.new
       end
     else 
      @song = Song.new
