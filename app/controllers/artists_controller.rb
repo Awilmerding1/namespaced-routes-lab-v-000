@@ -1,6 +1,10 @@
 class ArtistsController < ApplicationController
   def index
-    @artists = Artist.all
+    if Preference.last[:artist_sort_order] == "ASC"
+      @artists = Artist.order('name ASC')
+    else 
+      @artists = Artist.order('name DESC')
+    end
   end
 
   def show
@@ -8,7 +12,12 @@ class ArtistsController < ApplicationController
   end
 
   def new
-    @artist = Artist.new
+    if Preference.last[:allow_create_artists] == true 
+       @artist = Artist.new
+    else 
+      flash[:alert] = "You are not authorized to add a new artist."
+      redirect_to artists_path
+    end
   end
 
   def create

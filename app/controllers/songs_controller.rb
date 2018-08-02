@@ -8,7 +8,11 @@ class SongsController < ApplicationController
         @songs = @artist.songs
       end
     else
-      @songs = Song.all
+      if Preference.last[:song_sort_order] == "ASC"
+        @songs = Song.order('name ASC')
+      else 
+        @songs = Song.order('name DESC')
+      end
     end
   end
 
@@ -25,7 +29,12 @@ class SongsController < ApplicationController
   end
 
   def new
-    @song = Song.new
+    if Preference.last[:allow_create_songs] == true 
+      @song = Song.new
+    else 
+      flash[:alert] = "You are not authorized to add a new song."
+      redirect_to songs_path
+    end
   end
 
   def create
